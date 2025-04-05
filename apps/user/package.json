@@ -1,5 +1,5 @@
 {
-  "name": "docs",
+  "name": "user",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -27,5 +27,15 @@
     "postcss": "^8",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/ui": "workspace:*"
+  },
+  "optionalDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/ui": "workspace:*"
   }
 }
