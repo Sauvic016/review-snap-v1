@@ -28,7 +28,7 @@ const StepThreePreview = ({ data }: StepThreeProps) => {
         </h2>
 
         {/* Review Card */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-black/40 to-black/20 rounded-2xl border border-amber-400/20 shadow-xl">
+        <div className="relative overflow-hidden bg-gradient-to-br from-amber-400/40 to-amber-200/20 rounded-2xl border border-amber-400/20 shadow-xl">
           {/* Header Section */}
           <div className="p-6 pb-4 border-b border-amber-400/20">
             <div className="flex items-center gap-4">
@@ -51,12 +51,12 @@ const StepThreePreview = ({ data }: StepThreeProps) => {
                 </div>
               </div>
               <div className="flex-grow">
-                <h3 className="text-xl font-semibold text-amber-200">
+                <h3 className="text-xl font-semibold text-amber-600">
                   {data.name || "Anonymous"}
                 </h3>
-                <div className="flex items-center gap-2 text-gray-400 text-sm">
-                  <Calendar className="h-4 w-4" />
-                  <span>{JSON.stringify(formatDate(new Date()))}</span>
+                <div className="flex items-center gap-2 text-gray-700 text-sm">
+                  <Calendar className="h-4 w-4 text-yellow-600  drop-shadow-glow" />
+                  <span>{formatDate(new Date())}</span>
                 </div>
               </div>
               <div className="flex gap-1">
@@ -82,9 +82,9 @@ const StepThreePreview = ({ data }: StepThreeProps) => {
             {data.reviewType === "TEXT"
               ? (
                 <div className="flex items-center">
-                  <MessageSquare className=" h-6 w-6 text-amber-400/20" />
-                  <p className="text-gray-200 leading-relaxed pl-3">
-                    {JSON.stringify(data.review) ||
+                  <MessageSquare className=" h-6 w-6 text-amber-500" />
+                  <p className="text-gray-700 leading-relaxed pl-3">
+                    {(data.review) ||
                       "No review content provided."}
                   </p>
                 </div>
@@ -121,8 +121,8 @@ const StepThreePreview = ({ data }: StepThreeProps) => {
           {/* Footer Section */}
           <div className="px-6 py-4 bg-gradient-to-r from-amber-400/20 to-yellow-500/30 border-t border-amber-400/20">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-amber-200">Verified Review</span>
-              <span className="text-gray-300">{data.email}</span>
+              <span className="text-amber-700">Verified Review</span>
+              <span className="text-gray-700">{data.email}</span>
             </div>
           </div>
         </div>

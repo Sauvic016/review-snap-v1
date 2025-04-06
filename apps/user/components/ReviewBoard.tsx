@@ -177,47 +177,50 @@ export default function ReviewFormWrapper(
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
+    <div className=" min-h-screen flex items-center justify-center ">
+      <div className="w-full max-w-3xl">
         {/* Form Container */}
         {/* <div className="backdrop-blur-xl bg-white/10 rounded-2xl border border-white/20 shadow-2xl p-8"> */}
-        <CardWrapper>
+        <CardWrapper isFullScreen>
           {renderPage()}
-          <div className="flex justify-between mt-8">
-            {step > 1 && step < 5 && (
-              <button
-                onClick={handleBack}
-                className="flex items-center px-4 py-2 text-amber-400 hover:text-amber-300 transition-colors"
-              >
-                <ChevronLeft className="h-5 w-5 mr-2" />
-                Back
-              </button>
-            )}
-            <div className="ml-auto">
-              {step > 1 && step < 4
-                ? (
-                  <button
-                    onClick={handleNext}
-                    className="flex items-center px-6 py-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-900 rounded-lg hover:from-amber-500 hover:to-yellow-600 transition-all duration-200"
-                  >
-                    Next
-                    {/* <ChevronRight className="h-5 w-5 ml-2" /> */}
-                  </button>
-                )
-                : (
-                  step > 1 &&
-                  step < 5 && (
+
+          {step !== 1 && (
+            <div className="flex justify-between ">
+              {step > 1 && step < 5 && (
+                <button
+                  onClick={handleBack}
+                  className="flex items-center px-4 py-2  bg-gradient-to-r from-amber-400/20 to-yellow-500/20 text-amber-600 rounded-lg cursor-pointer hover:from-amber-400/30 hover:to-yellow-500/30 border border-amber-400/40"
+                >
+                  <ChevronLeft className="h-5 w-5 mr-2" />
+                  Back
+                </button>
+              )}
+              <div className="ml-auto">
+                {step > 1 && step < 4
+                  ? (
                     <button
-                      onClick={handleSubmit}
+                      onClick={handleNext}
                       className="flex items-center px-6 py-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-900 rounded-lg hover:from-amber-500 hover:to-yellow-600 transition-all duration-200"
                     >
-                      Submit Review
+                      Next
                       <ChevronRight className="h-5 w-5 ml-2" />
                     </button>
                   )
-                )}
+                  : (
+                    step > 1 &&
+                    step < 5 && (
+                      <button
+                        onClick={handleSubmit}
+                        className="flex items-center px-6 py-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-900 rounded-lg hover:from-amber-500 hover:to-yellow-600 transition-all duration-200"
+                      >
+                        Submit Review
+                        <ChevronRight className="h-5 w-5 ml-2" />
+                      </button>
+                    )
+                  )}
+              </div>
             </div>
-          </div>
+          )}
         </CardWrapper>
       </div>
     </div>
