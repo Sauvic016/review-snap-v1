@@ -16,9 +16,11 @@ const TemplateCard = (
   { title, reviewCount, lastUpdated, id }: TemplateCardProps,
 ) => {
   // Format the date if it's a Date object
-  const formattedDate = lastUpdated instanceof Date
-    ? lastUpdated.toLocaleDateString()
-    : lastUpdated;
+
+  // const getNow = cache(() => new Date());
+  // const formattedDate = lastUpdated instanceof Date
+  //   ? lastUpdated.toLocaleDateString()
+  //   : lastUpdated;
   const router = useRouter();
 
   const footer = (
@@ -40,7 +42,15 @@ const TemplateCard = (
     >
       <div className=" flex justify-between text-sm text-gray-500 mt-2 p-4">
         <span>{reviewCount} reviews</span>
-        <span>Updated {formattedDate}</span>
+        <span>
+          Updated {lastUpdated
+            ? new Date(lastUpdated).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })
+            : ""}
+        </span>
       </div>
     </GenericCard>
   );

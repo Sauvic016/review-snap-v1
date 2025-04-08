@@ -1,4 +1,5 @@
-import { getTemplate } from "~/app/actions/template";
+import { getTemplate } from "@/app/actions/template";
+import TemplateWorkspace from "@/components/template/TemplateWorkspace";
 
 // type Props = {};
 
@@ -7,15 +8,14 @@ const TemplatePage = async (props: { params: Promise<{ id: string }> }) => {
 
   //Fetch data using templateId
   const template = await getTemplate(id);
-  console.log(template);
+
   if (!template) {
     return <div>No template found</div>;
   }
 
-  // TODO: Showcase Video testimonial
   return (
-    <div className="bg-black">
-      Hi
+    <div className="flex flex-1 p-0">
+      <TemplateWorkspace review={template.reviews} template={template} />
     </div>
   );
 };
