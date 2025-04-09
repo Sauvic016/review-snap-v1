@@ -2,6 +2,7 @@ import "@repo/ui/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { SessionProvider } from "@/components/providers/SessionProvider";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +18,13 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-black text-white`}>
+      <head>
+        <Script
+          src="https://unpkg.com/react-scan/dist/install-hook.global.js"
+          strategy="beforeInteractive"
+        />
+      </head>
+      <body className={`${inter.className} bg-transparent`}>
         <SessionProvider>
           {children}
         </SessionProvider>

@@ -13,17 +13,19 @@ export default function ShareView({ templateId }: ShareViewProps) {
   const [copySuccess, setCopySuccess] = useState(false);
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(`http://localhost:3001/r/${templateId}`);
+    navigator.clipboard.writeText(
+      `${process.env.NEXT_PUBLIC_USERAPP_URL}/review/${templateId}`,
+    );
     setCopySuccess(true);
     setTimeout(() => setCopySuccess(false), 2000);
   };
 
-  const handleCopyEmbed = () => {
-    navigator.clipboard.writeText(
-      `<iframe src="http://localhost:3001/r/${templateId}" width="100%" height="600" frameborder="0"></iframe>`,
-    );
-    alert("Embed code copied to clipboard");
-  };
+  // const handleCopyEmbed = () => {
+  //   navigator.clipboard.writeText(
+  //     `<iframe src="${process.env.NEXT_PUBLIC_USERAPP_URL}/review/${templateId}" width="100%" height="600" frameborder="0"></iframe>`,
+  //   );
+  //   alert("Embed code copied to clipboard");
+  // };
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gradient-to-br from-zinc-800/30 to-zinc-900/30 rounded-xl border border-yellow-500/10">
@@ -40,7 +42,7 @@ export default function ShareView({ templateId }: ShareViewProps) {
           <div className="flex items-center space-x-2">
             <Input
               readOnly
-              value={`http://localhost:3001/r/${templateId}`}
+              value={`${process.env.NEXT_PUBLIC_USERAPP_URL}/review/${templateId}`}
               className="bg-zinc-900 border-gray-700 text-white"
             />
             <Button
@@ -54,7 +56,9 @@ export default function ShareView({ templateId }: ShareViewProps) {
           </div>
         </div>
 
-        <div className="p-4 bg-zinc-800/50 rounded-lg border border-yellow-500/20">
+        {/* // TODO: QR and Embedd */}
+        {
+          /* <div className="p-4 bg-zinc-800/50 rounded-lg border border-yellow-500/20">
           <h3 className="font-medium text-white mb-2">QR Code</h3>
           <div className="flex items-center justify-center p-4 bg-white rounded-lg">
             <div className="w-48 h-48 bg-gray-200 flex items-center justify-center">
@@ -66,12 +70,14 @@ export default function ShareView({ templateId }: ShareViewProps) {
               Download QR Code
             </Button>
           </div>
-        </div>
+        </div> */
+        }
 
-        <div className="p-4 bg-zinc-800/50 rounded-lg border border-yellow-500/20">
+        {
+          /* <div className="p-4 bg-zinc-800/50 rounded-lg border border-yellow-500/20">
           <h3 className="font-medium text-white mb-2">Embed Code</h3>
           <div className="bg-zinc-900 p-3 rounded border border-gray-700 font-mono text-sm text-gray-300 overflow-x-auto">
-            {`<iframe src="http://localhost:3001/r/${templateId}" width="100%" height="600" frameborder="0"></iframe>`}
+            {`<iframe src="${process.env.NEXT_PUBLIC_USERAPP_URL}/review/${templateId}" width="100%" height="600" frameborder="0"></iframe>`}
           </div>
           <div className="mt-4 flex justify-end">
             <Button
@@ -82,7 +88,8 @@ export default function ShareView({ templateId }: ShareViewProps) {
               Copy Code
             </Button>
           </div>
-        </div>
+        </div> */
+        }
       </div>
     </div>
   );

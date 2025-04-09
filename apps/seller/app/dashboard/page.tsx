@@ -49,7 +49,7 @@ export default async function Dashboard() {
   const responseRate = "89%";
 
   return (
-    <div className="min-h-screen bg-black/40">
+    <div className="min-h-screen bg-black">
       {/* Navigation Bar */}
       <nav className="bg-black pt-4 ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

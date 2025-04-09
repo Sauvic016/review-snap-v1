@@ -1,9 +1,10 @@
 "use client";
-
+import { useState } from "react";
 import { Review } from "@/types/types";
 import { PlusCircle, Share, StarIcon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import Reviewcard from "@/components/template/reviews/Reviewcard";
+import { usePathname } from "next/navigation";
 
 interface ReviewsListProps {
   reviews: Review[];
@@ -47,6 +48,20 @@ export default function ReviewsList(
 
 // Empty state component
 function EmptyReviewsState() {
+  const [copySuccess, setCopySuccess] = useState(false);
+  const pathname = usePathname();
+
+  // Extract template ID from pathname
+  // Path format: /template/[templateId]
+  const templateId = pathname.split("/").pop() || "";
+
+  const handleShareTemplate = () => {
+    navigator.clipboard.writeText(
+      `${process.env.NEXT_PUBLIC_USERAPP_URL}/review/${templateId}`,
+    );
+    setCopySuccess(true);
+    setTimeout(() => setCopySuccess(false), 2000);
+  };
   return (
     <div className="col-span-2 flex justify-center">
       <div className="w-full max-w-md p-8 text-center space-y-6 bg-gradient-to-br from-zinc-800/30 to-zinc-900/30 rounded-xl border border-yellow-500/10">
@@ -67,25 +82,29 @@ function EmptyReviewsState() {
 
         <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
           <Button
-            variant="default"
-            size="lg"
-            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black transition-all shadow-lg hover:shadow-yellow-500/25"
-          >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Manual Review
-          </Button>
-
-          <Button
+            onClick={handleShareTemplate}
             variant="outline"
             size="lg"
-            className="border-yellow-500/30 text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400 transition-all"
+            className="border-yellow-500/30 bg-black text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400 transition-all relative"
           >
             <Share className="mr-2 h-4 w-4" />
             Share Template
+            {copySuccess && (
+              <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                ✓
+              </span>
+            )}
           </Button>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-yellow-500/10">
+        {copySuccess && (
+          <div className="mt-2 text-green-400 text-sm animate-fade-in">
+            Template URL copied to clipboard!
+          </div>
+        )}
+
+        {
+          /* <div className="mt-6 pt-6 border-t border-yellow-500/10">
           <p className="text-sm text-gray-500">
             Need help getting started?{" "}
             <a
@@ -95,7 +114,8 @@ function EmptyReviewsState() {
               Check out our guide
             </a>
           </p>
-        </div>
+        </div> */
+        }
       </div>
     </div>
   );

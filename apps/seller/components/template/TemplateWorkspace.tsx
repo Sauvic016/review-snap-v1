@@ -1,18 +1,25 @@
 "use client";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { SidebarInset, SidebarProvider } from "@repo/ui/components/ui/sidebar";
-import { getTemplate } from "@/app/actions/template";
+// import { getTemplate } from "@/app/actions/template";
 import { useParams, useRouter } from "next/navigation";
 import { Review, TemplateData, ViewType } from "@/types/types";
 import TemplateSidebar from "@/components/template/TemplateSidebar";
 import Reviewslist from "@/components/template/reviews/Reviewlist";
 import Reviewheader from "@/components/template/reviews/Reviewheader";
 import ShareView from "@/components/template/ShareView";
+// import WallOfLove from "@/components/walloflove";
+import IntegrationsView from "@/components/integrations";
+
+// Memoize child components for better performance
+const MemoizedReviewsList = memo(Reviewslist);
+const MemoizedShareView = memo(ShareView);
 
 interface TemplateWorkspaceProps {
   review: Review[];
   template?: TemplateData;
 }
+
 export default function TemplateWorkspace(
   { review: initialReviews, template }: TemplateWorkspaceProps,
 ) {
@@ -22,31 +29,13 @@ export default function TemplateWorkspace(
   const [shareExpanded, setShareExpanded] = useState(false);
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
 
-  // Handle view changes and data fetching
-  const handleViewChange = async (view: ViewType) => {
-    if (view === "editTemplate") {
-      router.push(`/template/${params.id}/edit`);
-      return;
-    }
-    if (view === "reviews") {
-      try {
-        // Fetch fresh reviews data using ID from URL params
-        const response = await getTemplate(params.id as string);
-        if (!response) throw new Error("Failed to fetch reviews");
-        setReviews(response.reviews);
-      } catch (error) {
-        // Fallback to initial reviews if fetch fails
-        setReviews(initialReviews);
-      }
-    }
+  // Simplify view handling - remove unnecessary fetch on tab change
+  const handleViewChange = (view: ViewType) => {
+    setActiveView(view);
   };
 
   // Add another useEffect to monitor reviews state changes
   useEffect(() => {}, [reviews]);
-
-  useEffect(() => {
-    handleViewChange(activeView);
-  }, [activeView]);
 
   const toggleShareExpand = () => {
     setShareExpanded(!shareExpanded);
@@ -63,21 +52,20 @@ export default function TemplateWorkspace(
     );
   };
 
+  // Use memoized content for better performance
   const renderMainContent = () => {
     switch (activeView) {
       case "reviews":
         return (
-          <Reviewslist
+          <MemoizedReviewsList
             reviews={reviews}
             onBookmarkToggle={handleBookmarkToggle}
           />
         );
-      // case "integrations":
-      //   return <IntegrationsView />;
+      case "integrations":
+        return <IntegrationsView />;
       case "share":
-        return <ShareView templateId={template?.id} />;
-      // case "wallOfLove":
-      //   return <WallOfLove sellerId={template?.sellerId || ""} templateId={template?.id || ""} />;
+        return <MemoizedShareView templateId={template?.id} />;
 
       default:
         return <div>Select an option from the sidebar</div>;
@@ -89,16 +77,18 @@ export default function TemplateWorkspace(
       <div className="flex h-full w-full overflow-hidden bg-black">
         <TemplateSidebar
           activeView={activeView}
-          setActiveView={setActiveView}
+          setActiveView={handleViewChange}
           shareExpanded={shareExpanded}
           toggleShareExpand={toggleShareExpand}
           templateId={template?.id}
         />
 
-        <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex flex-1  flex-col overflow-hidden">
           <Reviewheader activeView={activeView} />
 
-          {renderMainContent()}
+          <div className="flex-1 overflow-auto flex items-center justify-center">
+            {renderMainContent()}
+          </div>
         </div>
       </div>
     </SidebarProvider>

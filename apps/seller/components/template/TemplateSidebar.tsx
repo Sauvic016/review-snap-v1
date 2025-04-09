@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { useParams, useRouter } from "next/navigation";
 
 interface ReviewSidebarProps {
   activeView: ViewType;
@@ -50,10 +51,15 @@ export default function ReviewSidebar({
   const [copySuccess, setCopySuccess] = useState(false);
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(`http://localhost:3001/r/${templateId}`);
+    navigator.clipboard.writeText(
+      `${process.env.NEXT_PUBLIC_USERAPP_URL}/review/${templateId}`,
+    );
     setCopySuccess(true);
     setTimeout(() => setCopySuccess(false), 2000);
   };
+  const params = useParams();
+  const router = useRouter();
+  console.log(params.id);
 
   return (
     <Sidebar className="border-r border-gray-800 bg-black h-full flex flex-col">
@@ -140,7 +146,8 @@ export default function ReviewSidebar({
 
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={() => setActiveView("wallOfLove")}
+                  onClick={() =>
+                    router.push(`/template/${params.id}/wall-of-love`)}
                   className={activeView === "wallOfLove"
                     ? "bg-yellow-500/10 text-yellow-500"
                     : "hover:bg-zinc-800/70"}
@@ -154,7 +161,7 @@ export default function ReviewSidebar({
 
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={() => setActiveView("editTemplate")}
+                  onClick={() => router.push(`/template/${params.id}/edit`)}
                   className={activeView === "editTemplate"
                     ? "bg-yellow-500/10 text-yellow-500"
                     : "hover:bg-zinc-800/70"}
@@ -202,7 +209,7 @@ function ShareExpander({
       <div className="flex items-center space-x-2 mb-2">
         <Input
           readOnly
-          value={`http://localhost:3001/r/${templateId}`}
+          value={`http://localhost:3001/review/${templateId}`}
           className="text-xs h-8 bg-zinc-900 border-gray-700 text-white"
         />
         <Button

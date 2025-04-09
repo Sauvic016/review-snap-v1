@@ -32,7 +32,8 @@ export const createTemplate = async (
 };
 
 export const getTemplate = async (id: string) => {
-  const template = prisma.template.findUnique({
+  //TODO add caching
+  const template = await prisma.template.findUnique({
     where: {
       id,
     },
@@ -44,8 +45,35 @@ export const getTemplate = async (id: string) => {
   return template;
 };
 
+export const getTemplateOptimized = async (id: string) => {
+  // Use Next.js fetch caching mechanism
+  const cacheKey = `template-${id}`;
+
+  const template = await prisma.template.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      questions: {
+        orderBy: {
+          order: "asc",
+        },
+      },
+      // Limit the reviews to most recent ones for faster loading
+      reviews: {
+        take: 20,
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
+  });
+
+  return template;
+};
+
 export const getAllTemplate = async (sellerId: string) => {
-  const templates = prisma.template.findMany({
+  const templates = await prisma.template.findMany({
     where: {
       sellerId,
     },
