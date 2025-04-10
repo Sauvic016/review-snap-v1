@@ -1,9 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Review } from "@/types/types";
-import { PlusCircle, Share, StarIcon } from "lucide-react";
+import { Share, StarIcon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
-import Reviewcard from "@/components/template/reviews/Reviewcard";
+import ReviewcardWrapper from "@/components/template/reviews/ReviewcardWrapper";
 import { usePathname } from "next/navigation";
 
 interface ReviewsListProps {
@@ -11,37 +11,76 @@ interface ReviewsListProps {
   onBookmarkToggle: (reviewId: string, isBookmarked: boolean) => void;
 }
 
-export default function ReviewsList(
-  { reviews, onBookmarkToggle }: ReviewsListProps,
-) {
+export default function ReviewsList({
+  reviews,
+  onBookmarkToggle,
+}: ReviewsListProps) {
+  const [columnCount, setColumnCount] = useState(3);
+
+  // Handle responsive column count
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setColumnCount(1);
+      } else if (window.innerWidth < 1024) {
+        setColumnCount(2);
+      } else {
+        setColumnCount(3);
+      }
+    };
+
+    // Set initial column count
+    handleResize();
+
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+
+    // Clean up
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Distribute reviews across columns based on current column count
+  const distributeReviews = () => {
+    const columns: Review[][] = Array.from({ length: columnCount }, () => []);
+
+    reviews.forEach((review, index) => {
+      const columnIndex = index % columnCount;
+      if (columns[columnIndex]) {
+        columns[columnIndex].push(review);
+      }
+    });
+
+    return columns;
+  };
+
   if (reviews.length === 0) {
     return <EmptyReviewsState />;
   }
 
-  return (
-    <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4">
-      {reviews.map((review: Review, index: number) => {
-        // Make video reviews large, and every 5th non-video review large
-        const hasVideo = review.videoUrl != null &&
-          review.videoUrl.length !== 0;
-        const isLarge = hasVideo || index % 5 === 0;
+  const columns = distributeReviews();
 
-        return (
-          <div
-            key={review.id}
-            className={`
-              col-span-1
-              ${isLarge ? "lg:col-span-8" : "lg:col-span-4"}
-              ${hasVideo ? "h-[400px]" : "h-[250px] lg:h-[300px]"}
-            `}
-          >
-            <Reviewcard
-              review={review}
-              onBookmarkToggle={onBookmarkToggle}
-            />
+  return (
+    <div className="relative w-full ">
+      <div
+        className={`grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 m-4`}
+      >
+        {columns.map((column, columnIndex) => (
+          <div key={columnIndex} className="flex flex-col gap-6">
+            {column.map((review, index) => (
+              <div
+                key={`${review.id}-${index}`}
+                className="relative overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg h-auto"
+              >
+                <ReviewcardWrapper
+                  key={review.id}
+                  review={review}
+                  onBookmarkToggle={onBookmarkToggle}
+                />
+              </div>
+            ))}
           </div>
-        );
-      })}
+        ))}
+      </div>
     </div>
   );
 }
@@ -66,8 +105,7 @@ function EmptyReviewsState() {
     <div className="col-span-2 flex justify-center">
       <div className="w-full max-w-md p-8 text-center space-y-6 bg-gradient-to-br from-zinc-800/30 to-zinc-900/30 rounded-xl border border-yellow-500/10">
         <div className="relative mx-auto w-32 h-32 flex items-center justify-center bg-zinc-800/50 rounded-full border border-yellow-500/20">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 animate-pulse">
-          </div>
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 animate-pulse"></div>
           <StarIcon className="relative z-10 w-16 h-16 text-yellow-500 opacity-80" />
         </div>
 
@@ -103,8 +141,7 @@ function EmptyReviewsState() {
           </div>
         )}
 
-        {
-          /* <div className="mt-6 pt-6 border-t border-yellow-500/10">
+        {/* <div className="mt-6 pt-6 border-t border-yellow-500/10">
           <p className="text-sm text-gray-500">
             Need help getting started?{" "}
             <a
@@ -114,8 +151,7 @@ function EmptyReviewsState() {
               Check out our guide
             </a>
           </p>
-        </div> */
-        }
+        </div> */}
       </div>
     </div>
   );

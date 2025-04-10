@@ -63,7 +63,11 @@ export default function TemplateWorkspace(
           />
         );
       case "integrations":
-        return <IntegrationsView />;
+        return (
+          <div className="flex-1 overflow-auto flex items-center justify-center">
+            <IntegrationsView />
+          </div>
+        );
       case "share":
         return <MemoizedShareView templateId={template?.id} />;
 
@@ -86,9 +90,7 @@ export default function TemplateWorkspace(
         <div className="flex flex-1  flex-col overflow-hidden">
           <Reviewheader activeView={activeView} />
 
-          <div className="flex-1 overflow-auto flex items-center justify-center">
-            {renderMainContent()}
-          </div>
+          {renderMainContent()}
         </div>
       </div>
     </SidebarProvider>

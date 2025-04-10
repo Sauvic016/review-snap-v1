@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Review } from "@/types/types";
 // import ReviewCard from "@/components/template/reviews/Reviewcard";
 import ReviewCardSP from "@repo/ui/components/Reviewcard";
@@ -10,137 +10,73 @@ interface GridViewProps {
 }
 
 export function GridView({ testimonials }: GridViewProps) {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {testimonials.map((testimonial) => (
-        <ReviewCardSP
-          key={testimonial.id}
-          email={testimonial.customerEmail!}
-          profileImageSrc={testimonial?.customerPhoto}
-          name={testimonial.customerName}
-          rating={testimonial.rating!}
-          review={testimonial?.responses}
-          videoSrc={testimonial?.videoUrl}
-          reviewType={testimonial.type}
-          seller
-          // additionalImageSrc={"testimonial"}
-        />
-      ))}
-    </div>
-  );
-}
+  const [columnCount, setColumnCount] = useState(3);
 
-export function MovingGridView({ testimonials }: GridViewProps) {
-  // Create columns of testimonials
-  const createColumns = () => {
-    const columns: Review[][] = [[], [], []];
+  // Handle responsive column count
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setColumnCount(1);
+      } else if (window.innerWidth < 1024) {
+        setColumnCount(2);
+      } else {
+        setColumnCount(3);
+      }
+    };
 
-    // Distribute testimonials across columns
+    // Set initial column count
+    handleResize();
+
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+
+    // Clean up
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Distribute testimonials across columns based on current column count
+  const distributeTestimonials = () => {
+    const columns: Review[][] = Array.from({ length: columnCount }, () => []);
+
     testimonials.forEach((testimonial, index) => {
-      const columnIndex = index % 3;
-      columns[columnIndex]?.push(testimonial);
+      const columnIndex = index % columnCount;
+      if (columns[columnIndex]) {
+        columns[columnIndex].push(testimonial);
+      }
     });
 
     return columns;
   };
 
-  const columns = createColumns();
-  const columnRefs = [
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-  ];
-
-  // Set up the infinite scroll
-  useEffect(() => {
-    // For each column
-    columnRefs.forEach((columnRef, index) => {
-      if (!columnRef.current) return;
-
-      const column = columnRef.current;
-      const scrollContainer = column.querySelector(
-        ".scroll-container",
-      ) as HTMLElement;
-
-      if (!scrollContainer) return;
-
-      // Clone the content for infinite scroll
-      const content = scrollContainer.querySelector(".content") as HTMLElement;
-      if (!content) return;
-
-      // Function to clone content and append it
-      const cloneAndAppend = () => {
-        const clone = content.cloneNode(true) as HTMLElement;
-        scrollContainer.appendChild(clone);
-      };
-
-      // Add initial clone
-      cloneAndAppend();
-
-      // Set up the animation
-      let animationId: number;
-      let startTime: number | null = null;
-      const duration = 30000 + index * 5000; // Different speed for each column (30s, 35s, 40s)
-
-      const animate = (timestamp: number) => {
-        if (!startTime) startTime = timestamp;
-        const elapsed = timestamp - startTime;
-
-        // Calculate how far we've scrolled (0 to content height)
-        const contentHeight = content.offsetHeight;
-        const scrollPosition = ((elapsed % duration) / duration) *
-          contentHeight;
-
-        // Apply the scroll
-        scrollContainer.style.transform = `translateY(-${scrollPosition}px)`;
-
-        // If we've scrolled past the first content block, reset
-        if (scrollPosition >= contentHeight) {
-          startTime = timestamp - (elapsed % duration);
-        }
-
-        animationId = requestAnimationFrame(animate);
-      };
-
-      // Start the animation
-      animationId = requestAnimationFrame(animate);
-
-      // Clean up
-      return () => {
-        cancelAnimationFrame(animationId);
-      };
-    });
-  }, []);
+  const columns = distributeTestimonials();
 
   return (
-    <div className="w-full overflow-hidden py-8">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="relative w-full">
+      <div className={`grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3`}>
         {columns.map((column, columnIndex) => (
           <div
             key={columnIndex}
-            ref={columnRefs[columnIndex]}
-            className="overflow-hidden h-[800px] relative"
+            className="flex flex-col gap-6"
           >
-            <div className="scroll-container absolute w-full">
-              <div className="content">
-                {column.map((testimonial) => (
-                  <div key={testimonial.id} className="mb-6">
-                    <ReviewCardSP
-                      email={testimonial.customerEmail!}
-                      profileImageSrc={testimonial?.customerPhoto}
-                      name={testimonial.customerName}
-                      rating={testimonial.rating!}
-                      review={testimonial?.responses}
-                      videoSrc={testimonial?.videoUrl}
-                      reviewType={testimonial.type}
-                      seller
-                      reviewDate={testimonial.createdAt}
-                    />
-                  </div>
-                ))}
+            {column.map((testimonial, index) => (
+              <div
+                key={`${testimonial.id}-${index}`}
+                className="relative overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg h-auto"
+              >
+                <ReviewCardSP
+                  key={testimonial.id}
+                  email={testimonial.customerEmail!}
+                  profileImageSrc={testimonial?.customerPhoto}
+                  name={testimonial.customerName}
+                  rating={testimonial.rating!}
+                  review={testimonial?.responses}
+                  videoSrc={testimonial?.videoUrl}
+                  reviewType={testimonial.type}
+                  seller
+                  reviewDate={new Date(testimonial.createdAt)}
+                />
               </div>
-              {/* Clones will be added here by JavaScript */}
-            </div>
+            ))}
           </div>
         ))}
       </div>

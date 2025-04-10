@@ -20,7 +20,7 @@ export function SliderView({ testimonials }: SliderViewProps) {
   const isMobile = useIsMobile();
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4  ">
+    <div className="w-full   ">
       <Carousel
         opts={{
           align: "start",
@@ -51,8 +51,8 @@ export function SliderView({ testimonials }: SliderViewProps) {
           ))}
         </CarouselContent>
         <div className="flex justify-center mt-8 gap-4">
-          <CarouselPrevious className="bg-black" />
-          <CarouselNext className="bg-black" />
+          <CarouselPrevious className="bg-black text-white" />
+          <CarouselNext className="bg-black text-white" />
         </div>
       </Carousel>
     </div>

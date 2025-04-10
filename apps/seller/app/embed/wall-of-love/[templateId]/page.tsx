@@ -1,7 +1,5 @@
-import {
-  GridView,
-  MovingGridView,
-} from "@/components/walloflove/grid-view/GridView";
+import { GridView } from "@/components/walloflove/grid-view/GridView";
+import MovingGridView from "@/components/walloflove/grid-view/MovingGridView";
 import { SliderView } from "@/components/walloflove/SliderView";
 import { Suspense } from "react";
 import { Review } from "@/types/types";

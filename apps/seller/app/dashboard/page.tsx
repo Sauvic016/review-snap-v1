@@ -11,13 +11,10 @@ import {
   Settings,
   Users,
 } from "lucide-react";
-// import { Button } from "@repo/ui/components/ui/button";
-// import CreateTemplateButton from "@/components/CreateTemplateBtn";
 import { getAllTemplate } from "../actions/template";
 import { requireAuth } from "@/lib/auth";
 import TemplateCard from "@/components/template/TemplateCard";
 import StatCard from "@repo/ui/components/SellerCards/StatCard";
-// import { useRouter } from "next/navigation";
 
 import { User as UserType } from "@repo/database/client";
 import RenderAuthButtons from "@/components/auth/AuthButtons";
